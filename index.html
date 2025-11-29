@@ -116,6 +116,8 @@
             text-align: center;
             padding: 15px 0;
             width: 100%;
+            position: relative;
+            bottom: 0;
         }
         .add-event {
             background-color: #27ae60;
@@ -127,6 +129,8 @@
             margin: 15px 0;
             font-weight: bold;
             transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
         }
         .add-event:hover {
             background-color: #2ecc71;
@@ -224,13 +228,6 @@
             margin-left: 10px;
             font-size: 0.9rem;
         }
-        .event-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
         .event-actions {
             display: flex;
             justify-content: flex-end;
@@ -297,6 +294,7 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
+            box-sizing: border-box;
         }
         .form-group textarea {
             height: 100px;
@@ -334,11 +332,6 @@
             align-items: center;
             margin-bottom: 10px;
         }
-        .contact-item i {
-            margin-right: 10px;
-            color: #3498db;
-            font-size: 1.2rem;
-        }
         @media (max-width: 768px) {
             .container {
                 width: 95%;
@@ -355,6 +348,13 @@
             }
             .search-bar input {
                 width: 90%;
+            }
+            .event-actions {
+                flex-direction: column;
+            }
+            .event-actions .btn {
+                margin: 5px 0;
+                width: 100%;
             }
         }
     </style>
@@ -497,25 +497,25 @@
             </div>
         </div>
         
-        <a href="#" class="add-event" id="openModal">Жаңа іс-шара қосу</a>
+        <button class="add-event" id="openModal">Жаңа іс-шара қосу</button>
         
         <h2 class="section-title" id="contact">Байланыс</h2>
         <div class="contact-info">
             <p>Қосымша ақпарат алу үшін:</p>
             <div class="contact-item">
-                <i>📧</i>
+                <span>📧</span>
                 <span>Email: olimpiada@mektep.kz</span>
             </div>
             <div class="contact-item">
-                <i>📞</i>
+                <span>📞</span>
                 <span>Телефон: +7 777 123 45 67</span>
             </div>
             <div class="contact-item">
-                <i>📍</i>
+                <span>📍</span>
                 <span>Мекен-жай: Абай көшесі, 12, Алматы</span>
             </div>
             <div class="contact-item">
-                <i>🕒</i>
+                <span>🕒</span>
                 <span>Жұмыс уақыты: Дүйсенбі-Жұма, 9:00-18:00</span>
             </div>
         </div>
@@ -569,89 +569,101 @@
 
     <script>
         // Модал терезесін басқару
-        const openModalBtn = document.getElementById('openModal');
-        const closeModalBtn = document.getElementById('closeModal');
-        const modal = document.getElementById('eventModal');
-        const eventForm = document.getElementById('eventForm');
-        
-        openModalBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            modal.style.display = 'flex';
-        });
-        
-        closeModalBtn.addEventListener('click', function() {
-            modal.style.display = 'none';
-        });
-        
-        window.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                modal.style.display = 'none';
+        document.addEventListener('DOMContentLoaded', function() {
+            const openModalBtn = document.getElementById('openModal');
+            const closeModalBtn = document.getElementById('closeModal');
+            const modal = document.getElementById('eventModal');
+            const eventForm = document.getElementById('eventForm');
+            
+            if (openModalBtn && modal) {
+                openModalBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    modal.style.display = 'flex';
+                });
             }
-        });
-        
-        eventForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Іс-шара сәтті қосылды!');
-            modal.style.display = 'none';
-            eventForm.reset();
-        });
-        
-        // Іс-шараларды сүзгілеу
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const events = document.querySelectorAll('.event');
-        
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                // Барлық батырмалардан актив класын алып тастау
-                filterBtns.forEach(b => b.classList.remove('active'));
-                // Ағымдағы батырмаға актив класын қосу
-                this.classList.add('active');
-                
-                const filter = this.getAttribute('data-filter');
-                
-                events.forEach(event => {
-                    if (filter === 'all' || event.getAttribute('data-type') === filter) {
-                        event.style.display = 'block';
-                    } else {
-                        event.style.display = 'none';
+            
+            if (closeModalBtn && modal) {
+                closeModalBtn.addEventListener('click', function() {
+                    modal.style.display = 'none';
+                });
+            }
+            
+            if (modal) {
+                window.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
                     }
                 });
-            });
-        });
-        
-        // Іздеу функциясы
-        const searchInput = document.getElementById('searchInput');
-        
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
+            }
             
-            events.forEach(event => {
-                const eventText = event.textContent.toLowerCase();
-                if (eventText.includes(searchTerm)) {
-                    event.style.display = 'block';
-                } else {
-                    event.style.display = 'none';
-                }
+            if (eventForm) {
+                eventForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('Іс-шара сәтті қосылды!');
+                    modal.style.display = 'none';
+                    eventForm.reset();
+                });
+            }
+            
+            // Іс-шараларды сүзгілеу
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const events = document.querySelectorAll('.event');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Барлық батырмалардан актив класын алып тастау
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Ағымдағы батырмаға актив класын қосу
+                    this.classList.add('active');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    
+                    events.forEach(event => {
+                        if (filter === 'all' || event.getAttribute('data-type') === filter) {
+                            event.style.display = 'block';
+                        } else {
+                            event.style.display = 'none';
+                        }
+                    });
+                });
             });
-        });
-        
-        // Тіркелу батырмаларына оқиға қосу
-        const registerBtns = document.querySelectorAll('.btn-register');
-        
-        registerBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const eventTitle = this.closest('.event').querySelector('h3').textContent.split(' ')[0];
-                alert(`Сіз "${eventTitle}" іс-шарасына тіркелдіңіз!`);
+            
+            // Іздеу функциясы
+            const searchInput = document.getElementById('searchInput');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    
+                    events.forEach(event => {
+                        const eventText = event.textContent.toLowerCase();
+                        if (eventText.includes(searchTerm)) {
+                            event.style.display = 'block';
+                        } else {
+                            event.style.display = 'none';
+                        }
+                    });
+                });
+            }
+            
+            // Тіркелу батырмаларына оқиға қосу
+            const registerBtns = document.querySelectorAll('.btn-register');
+            
+            registerBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const eventTitle = this.closest('.event').querySelector('h3').textContent.split(' ')[0];
+                    alert(`Сіз "${eventTitle}" іс-шарасына тіркелдіңіз!`);
+                });
             });
-        });
-        
-        // Толығырақ батырмаларына оқиға қосу
-        const detailBtns = document.querySelectorAll('.btn-details');
-        
-        detailBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const eventTitle = this.closest('.event').querySelector('h3').textContent.split(' ')[0];
-                alert(`"${eventTitle}" іс-шарасының толық ақпараты жақын арада қосылады.`);
+            
+            // Толығырақ батырмаларына оқиға қосу
+            const detailBtns = document.querySelectorAll('.btn-details');
+            
+            detailBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const eventTitle = this.closest('.event').querySelector('h3').textContent.split(' ')[0];
+                    alert(`"${eventTitle}" іс-шарасының толық ақпараты жақын арада қосылады.`);
+                });
             });
         });
     </script>
